@@ -12,6 +12,8 @@ const cats = ["上衣", "下装", "连衣裙", "外套", "鞋履", "包袋", "�
 const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const anon = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 const bucket = (import.meta.env.VITE_SUPABASE_BUCKET as string | undefined) || "wardrobe";
+const demoEmail = "demo@yixu.app";
+const demoPassword = "YixuDemo2026!";
 const ready = Boolean(url && anon && !url.includes("你的项目编号"));
 const supabase = ready ? createClient(url!, anon!) : null;
 
@@ -267,6 +269,12 @@ function AuthScreen() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
 
+  async function fillDemo() {
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    setMsg("已填入示例体验账号，可以直接点击登录。");
+  }
+
   async function submit(mode: "in" | "up") {
     if (!supabase) return;
     if (!email.trim() || !password) {
@@ -295,7 +303,9 @@ function AuthScreen() {
         <input placeholder="邮箱" value={email} onChange={(event) => setEmail(event.target.value)} />
         <input placeholder="密码" type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
         <button onClick={() => void submit("in")} disabled={busy}>{busy ? <Loader2 className="spin" /> : <ArrowRight />}登录</button>
-        <button className="secondary" onClick={() => void submit("up")} disabled={busy}>注册测试账号</button>
+        <button className="secondary" onClick={() => void fillDemo()} disabled={busy}>使用示例账号体验</button>
+        <button className="ghost" onClick={() => void submit("up")} disabled={busy}>注册自己的账号</button>
+        <small className="demo-hint">示例账号：demo@yixu.app / YixuDemo2026!</small>
         {msg && <span>{msg}</span>}
       </section>
     </main>
