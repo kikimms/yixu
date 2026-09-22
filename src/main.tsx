@@ -269,10 +269,31 @@ function AuthScreen() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
 
-  async function fillDemo() {
+  async function enterDemo() {
+    if (!supabase) return;
     setEmail(demoEmail);
     setPassword(demoPassword);
-    setMsg("已填入示例体验账号，可以直接点击登录。");
+    setBusy(true);
+    setMsg("正在进入示例账号…");
+    const login = await supabase.auth.signInWithPassword({ email: demoEmail, password: demoPassword });
+    if (!login.error) {
+      setBusy(false);
+      return;
+    }
+    if (!login.error.message.toLowerCase().includes("invalid login credentials")) {
+      setBusy(false);
+      setMsg(authErrorText(login.error.message));
+      return;
+    }
+    const signup = await supabase.auth.signUp({ email: demoEmail, password: demoPassword });
+    if (signup.error) {
+      setBusy(false);
+      setMsg(authErrorText(signup.error.message));
+      return;
+    }
+    const retry = await supabase.auth.signInWithPassword({ email: demoEmail, password: demoPassword });
+    setBusy(false);
+    if (retry.error) setMsg(authErrorText(retry.error.message));
   }
 
   async function submit(mode: "in" | "up") {
@@ -303,7 +324,7 @@ function AuthScreen() {
         <input placeholder="邮箱" value={email} onChange={(event) => setEmail(event.target.value)} />
         <input placeholder="密码" type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
         <button onClick={() => void submit("in")} disabled={busy}>{busy ? <Loader2 className="spin" /> : <ArrowRight />}登录</button>
-        <button className="secondary" onClick={() => void fillDemo()} disabled={busy}>使用示例账号体验</button>
+        <button className="secondary" onClick={() => void enterDemo()} disabled={busy}>{busy ? "进入中…" : "使用示例账号体验"}</button>
         <button className="ghost" onClick={() => void submit("up")} disabled={busy}>注册自己的账号</button>
         <small className="demo-hint">示例账号：demo@yixu.app / YixuDemo2026!</small>
         {msg && <span>{msg}</span>}
@@ -426,4 +447,28 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
 
-createRoot(document.getElementById("root")!).render(<App />);
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { message: string }> {
+  state = { message: "" };
+
+  static getDerivedStateFromError(error: unknown) {
+    return { message: error instanceof Error ? error.message : "页面加载失败，请刷新后重试。" };
+  }
+
+  render() {
+    if (this.state.message) {
+      return (
+        <main className="auth">
+          <section>
+            <p>YIXU ONLINE</p>
+            <h1>页面加载失败</h1>
+            <span>{this.state.message}</span>
+            <button onClick={() => window.location.reload()}>刷新页面</button>
+          </section>
+        </main>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+createRoot(document.getElementById("root")!).render(<ErrorBoundary><App /></ErrorBoundary>);
