@@ -57,7 +57,7 @@ function App() {
       supabase.from("outfits").select("id,name,pieces").order("created_at", { ascending: false }),
     ]);
     if (garments.error || saved.error) {
-      setError(garments.error?.message || saved.error?.message || "读取失败");
+      setError(authErrorText(garments.error?.message || saved.error?.message || "读取失败"));
       return;
     }
     const withUrls = await Promise.all(
@@ -128,7 +128,7 @@ function App() {
     }
     const result = await supabase.from("garments").delete().eq("id", item.id);
     if (result.error) {
-      setError(result.error.message);
+      setError(authErrorText(result.error.message));
       return;
     }
     await supabase.storage.from(bucket).remove([item.image_path]);
@@ -139,7 +139,7 @@ function App() {
   async function deleteOutfit(outfit: Outfit) {
     if (!supabase) return;
     const result = await supabase.from("outfits").delete().eq("id", outfit.id);
-    if (result.error) setError(result.error.message);
+    if (result.error) setError(authErrorText(result.error.message));
     await refresh();
   }
 
@@ -411,6 +411,7 @@ function authErrorText(message: string) {
   const lower = message.toLowerCase();
   if (lower.includes("anonymous sign-ins")) return "请填写邮箱和密码后再注册或登录。";
   if (lower.includes("invalid login credentials")) return "邮箱或密码不正确。";
+  if (lower.includes("jwt issued at future")) return "登录状态时间不同步，请退出后重新登录；如果还出现，请把设备时间设置为自动同步。";
   if (lower.includes("email not confirmed")) return "邮箱还没有确认，请先去邮箱点击 Supabase 的确认链接。";
   if (lower.includes("password")) return "密码不符合要求，请换一个更长、更难猜的密码。";
   if (lower.includes("email")) return "邮箱格式不正确，或这个邮箱暂时不能注册。";
