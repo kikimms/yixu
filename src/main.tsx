@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { createClient, type User } from "@supabase/supabase-js";
 import { ArrowRight, Bookmark, Check, ImagePlus, Layers, Loader2, LogOut, Plus, Shirt, Trash2 } from "lucide-react";
 import "./styles.css";
+import { WeatherCard } from "./WeatherCard";
 
 type Item = { id: string; name: string; category: string; image_path: string; image_url?: string };
 type Piece = { id: string; x: number; y: number; w: number };
@@ -162,6 +163,8 @@ function App() {
         </div>
         <UploadPanel busy={busy} setBusy={setBusy} onUpload={uploadClothing} />
       </section>
+
+      <WeatherCard />
 
       <nav className="tabs">
         <button data-active={tab === "closet"} onClick={() => setTab("closet")}><Shirt size={18} />我的衣橱 <em>{items.length}</em></button>

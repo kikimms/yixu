@@ -65,3 +65,28 @@ small { color: #718176; }
   .board-tools { grid-template-columns: 1fr; }
   .save { flex-direction: column; }
 }
+.weather-card { border: 1px solid #dce5dc; border-radius: 8px; padding: 22px; margin: 0 0 18px; background: linear-gradient(120deg, #eef3e9, #fffdf5); }
+.weather-heading, .weather-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.weather-eyebrow { color: #66836d; letter-spacing: .12em; font-size: 10px; }
+.weather-heading h2 { display: flex; align-items: center; gap: 8px; font-size: 20px; margin: 6px 0; }
+.weather-body { display: grid; grid-template-columns: auto auto minmax(180px, 1fr); gap: 22px; align-items: center; margin-top: 18px; }
+.weather-now, .weather-detail { display: flex; flex-direction: column; gap: 6px; }
+.weather-now strong { font-size: 46px; font-weight: 500; line-height: 1.1; }
+.weather-now strong small { font-size: 22px; }
+.weather-now span, .weather-detail { font-size: 13px; }
+.weather-detail small, .weather-source { color: #607166; font-size: 11px; }
+.weather-advice { margin: 0; padding-left: 20px; border-left: 1px solid #d0dccb; font-size: 14px; line-height: 1.8; }
+.weather-advice small { display: block; font-size: 11px; color: #607166; margin-top: 6px; }
+.weather-source { margin-top: 16px; }
+.weather-source a { color: inherit; text-underline-offset: 3px; }
+.weather-picker p, .weather-status { font-size: 14px; line-height: 1.6; }
+.weather-picker form { display: flex; gap: 8px; max-width: 460px; }
+.weather-picker input { min-width: 0; flex: 1; }
+.weather-cities { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.weather-city { padding: 8px 12px; border-radius: 6px; background: #fff; border: 1px solid #d0dccb; color: #294d35; text-align: left; }
+.weather-city small { display: block; color: #607166; font-size: 11px; margin-top: 3px; }
+@media (max-width: 640px) {
+  .weather-card { padding: 16px; }
+  .weather-body { grid-template-columns: 1fr 1fr; gap: 14px; }
+  .weather-advice { grid-column: 1 / -1; border-left: 0; border-top: 1px solid #d0dccb; padding: 12px 0 0; }
+}
